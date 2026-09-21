@@ -1,0 +1,22 @@
+{
+  "name": "thar-solar-server",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "node --watch index.js",
+    "start": "node index.js",
+    "seed": "node -e \"import('./config/db.js').then(m=>m.connectDb()).then(()=>import('./seed.js')).then(s=>s.seedIfEmpty()).then(r=>{console.log(r?'Seeded':'Already seeded');process.exit(0)}).catch(e=>{console.error(e);process.exit(1)})\""
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.14.0",
+    "multer": "^1.4.5-lts.2",
+    "nodemailer": "^6.10.1",
+    "thar-solar": "file:.."
+  }
+}
