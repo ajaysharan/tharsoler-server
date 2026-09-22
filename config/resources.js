@@ -1,39 +1,29 @@
 export const RESOURCES = {
   inquiries: {
     search: ['name', 'phone', 'city', 'email', 'capacity', 'source', 'message'],
-    prefix: 'inq',
   },
   customers: {
     search: ['name', 'phone', 'email', 'city', 'type'],
-    prefix: 'cus',
   },
   quotes: {
     search: ['no', 'customer', 'city', 'status'],
-    prefix: 'qt',
   },
   projects: {
     search: ['name', 'customer', 'city', 'manager'],
-    prefix: 'prj',
   },
   products: {
-    search: ['name', 'brand', 'sku', 'catLabel', 'spec'],
-    prefix: 'prd',
+    search: ['name', 'brand', 'sku', 'catLabel', 'spec', 'slug'],
   },
   services: {
-    search: ['title', 'titleHi', 'desc'],
-    prefix: 'svc',
+    search: ['title', 'titleHi', 'desc', 'slug'],
   },
   brands: {
-    search: ['name'],
-    prefix: 'brd',
+    search: ['name', 'slug'],
   },
   banners: {
     search: ['title', 'desc', 'hindi'],
-    prefix: 'bnr',
   },
   activity: {
     search: ['text', 'type'],
-    prefix: 'act',
-    readOnlyCreate: false,
   },
 };

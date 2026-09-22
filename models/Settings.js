@@ -36,7 +36,7 @@ export const DEFAULT_INQUIRY_HTML = `<div style="font-family:Arial,sans-serif;ma
 
 const settingsSchema = new mongoose.Schema(
   {
-    _id: { type: String, default: 'main' },
+    key: { type: String, required: true, unique: true, default: 'main', index: true },
     company: { type: String, default: 'THAR SOLAR' },
     unit: { type: String, default: 'A unit of Ganesh Motor' },
     city: { type: String, default: 'Badi Khatu, Nagaur, Rajasthan' },
@@ -44,22 +44,19 @@ const settingsSchema = new mongoose.Schema(
     email: { type: String, default: 'info@tharsolar.com' },
     gst: { type: String, default: '' },
 
-    // SMTP
     smtpHost: { type: String, default: '' },
     smtpPort: { type: Number, default: 587 },
     smtpSecure: { type: Boolean, default: false },
     smtpUser: { type: String, default: '' },
-    smtpPass: { type: String, default: '' },
+    smtpPass: { type: String, default: '', select: false },
     smtpFrom: { type: String, default: '' },
     smtpFromName: { type: String, default: 'THAR SOLAR' },
 
-    // OTP
     otpLogin: { type: Boolean, default: false },
     otpExpiresMinutes: { type: Number, default: 10 },
     otpSubject: { type: String, default: DEFAULT_OTP_SUBJECT },
     otpHtml: { type: String, default: DEFAULT_OTP_HTML },
 
-    // Auto mails
     mailAdminOnInquiry: { type: Boolean, default: true },
     mailThankYouCustomer: { type: Boolean, default: true },
     inquirySubject: { type: String, default: DEFAULT_INQUIRY_SUBJECT },
@@ -71,8 +68,9 @@ const settingsSchema = new mongoose.Schema(
 );
 
 settingsSchema.set('toJSON', {
+  versionKey: false,
   transform(_doc, ret) {
-    ret.id = ret._id;
+    ret.id = String(ret._id);
     delete ret._id;
     delete ret.__v;
     ret.smtpConfigured = Boolean(ret.smtpPass);

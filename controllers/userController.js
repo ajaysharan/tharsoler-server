@@ -1,8 +1,8 @@
 import bcrypt from 'bcryptjs';
 import { User } from '../models/User.js';
 import { AppError, catchAsync, send } from '../utils/AppError.js';
-import { uid } from '../utils/uid.js';
-import { paginate } from '../utils/paginate.js';
+import { paginate, sanitizeWriteBody } from '../utils/paginate.js';
+import { toOidList, isOid } from '../utils/oid.js';
 import { logActivity } from '../services/activityService.js';
 import { toPublicUser } from '../middleware/auth.js';
 
@@ -12,14 +12,13 @@ export const list = catchAsync(async (req, res) => {
 });
 
 export const create = catchAsync(async (req, res) => {
-  const body = req.body || {};
+  const body = sanitizeWriteBody(req.body || {});
   if (!body.email || !body.name) throw new AppError('Name and email required', 400);
 
-  const exists = await User.findOne({ email: String(body.email).toLowerCase() });
+  const exists = await User.findOne({ email: String(body.email).toLowerCase() }).lean();
   if (exists) throw new AppError('Email already exists', 400);
 
   const user = await User.create({
-    _id: uid('usr'),
     name: body.name,
     email: String(body.email).toLowerCase(),
     phone: body.phone || '',
@@ -33,15 +32,17 @@ export const create = catchAsync(async (req, res) => {
 });
 
 export const update = catchAsync(async (req, res) => {
-  const user = await User.findById(req.params.id);
+  if (!isOid(req.params.id)) throw new AppError('Invalid id', 400);
+  const user = await User.findById(req.params.id).select('+passwordHash');
   if (!user) throw new AppError('Not found', 404);
 
-  const body = req.body || {};
+  const body = sanitizeWriteBody(req.body || {});
   if (body.name) user.name = body.name;
   if (body.email) user.email = String(body.email).toLowerCase();
   if (body.phone !== undefined) user.phone = body.phone;
   if (body.role) user.role = body.role;
   if (body.status) user.status = body.status;
+  if (body.avatar !== undefined) user.avatar = body.avatar;
   if (body.password) user.passwordHash = await bcrypt.hash(body.password, 10);
 
   await user.save();
@@ -49,7 +50,8 @@ export const update = catchAsync(async (req, res) => {
 });
 
 export const removeMany = catchAsync(async (req, res) => {
-  const ids = req.body?.ids || [];
+  const ids = toOidList(req.body?.ids || []);
+  if (!ids.length) throw new AppError('No valid ids', 400);
   await User.deleteMany({ _id: { $in: ids } });
-  return send(res, { ok: true });
+  return send(res, { ok: true, deleted: ids.length });
 });

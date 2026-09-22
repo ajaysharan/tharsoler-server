@@ -1,6 +1,6 @@
 import { Product, Service, Brand, Banner, Inquiry } from '../models/index.js';
 import { AppError, catchAsync, send } from '../utils/AppError.js';
-import { uid } from '../utils/uid.js';
+import { leanToJson } from '../utils/paginate.js';
 import { getSettings } from '../services/settingsService.js';
 import { sendMail, buildInquiryAdminMail, buildThankYouMail } from '../services/mailService.js';
 import { logActivity } from '../services/activityService.js';
@@ -8,18 +8,18 @@ import { notifyAdmins } from '../services/notificationService.js';
 
 export const getSite = catchAsync(async (_req, res) => {
   const [products, services, brands, banners, settings] = await Promise.all([
-    Product.find({ active: true }).sort({ name: 1 }),
-    Service.find({ active: true }).sort({ sort: 1 }),
-    Brand.find({ active: true }).sort({ sort: 1 }),
-    Banner.find({ active: true }).sort({ sort: 1 }),
+    Product.find({ active: true }).sort({ name: 1 }).lean(),
+    Service.find({ active: true }).sort({ sort: 1 }).lean(),
+    Brand.find({ active: true }).sort({ sort: 1 }).lean(),
+    Banner.find({ active: true }).sort({ sort: 1 }).lean(),
     getSettings(),
   ]);
 
   return send(res, {
-    products: products.map((p) => p.toJSON()),
-    services: services.map((s) => s.toJSON()),
-    brands: brands.map((b) => b.toJSON()),
-    banners: banners.map((b) => b.toJSON()),
+    products: products.map(leanToJson),
+    services: services.map(leanToJson),
+    brands: brands.map(leanToJson),
+    banners: banners.map(leanToJson),
     settings: {
       company: settings.company,
       unit: settings.unit,
@@ -37,7 +37,6 @@ export const createInquiry = catchAsync(async (req, res) => {
   }
 
   const row = await Inquiry.create({
-    _id: uid('inq'),
     name: body.name,
     phone: body.phone,
     email: body.email || '',
@@ -48,7 +47,7 @@ export const createInquiry = catchAsync(async (req, res) => {
     message: body.message || '',
     status: 'new',
     source: body.source || 'Website',
-    assignedTo: '',
+    assignedTo: null,
     notes: '',
   });
 

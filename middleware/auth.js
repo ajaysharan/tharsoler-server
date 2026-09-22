@@ -26,7 +26,7 @@ export function authorize(...roles) {
 export function signToken(user, remember = false) {
   return jwt.sign(
     {
-      id: user._id || user.id,
+      id: String(user._id || user.id),
       email: user.email,
       role: user.role,
       name: user.name,

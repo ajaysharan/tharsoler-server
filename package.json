@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "node --watch index.js",
     "start": "node index.js",
-    "seed": "node -e \"import('./config/db.js').then(m=>m.connectDb()).then(()=>import('./seed.js')).then(s=>s.seedIfEmpty()).then(r=>{console.log(r?'Seeded':'Already seeded');process.exit(0)}).catch(e=>{console.error(e);process.exit(1)})\""
+    "seed": "node scripts/seed.js",
+    "seed:reset": "node scripts/seed.js --force"
   },
   "dependencies": {
     "bcryptjs": "^3.0.2",
