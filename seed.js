@@ -151,7 +151,7 @@ export async function seedDatabase({ force = false } = {}) {
     ctaLabel: 'Get Free Quote',
     ctaLink: '/quote',
     image: 'https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?auto=format&fit=crop&w=800&q=80',
-    video: 'https://videos.pexels.com/video-files/2800468/2800468-sd_640_360_30fps.mp4',
+    video: '',
     caption: 'Live solar energy in action',
     active: true,
     sort: 0,

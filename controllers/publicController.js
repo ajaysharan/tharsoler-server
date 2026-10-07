@@ -25,6 +25,12 @@ export const getSite = catchAsync(async (_req, res) => {
       unit: settings.unit,
       city: settings.city,
       phone: settings.phone,
+      phones: (settings.phones || [])
+        .filter((p) => p && String(p.number || '').trim())
+        .map((p) => ({
+          label: p.label || '',
+          number: String(p.number).trim(),
+        })),
       email: settings.email,
     },
   });

@@ -41,6 +41,20 @@ const settingsSchema = new mongoose.Schema(
     unit: { type: String, default: 'A unit of Ganesh Motor' },
     city: { type: String, default: 'Badi Khatu, Nagaur, Rajasthan' },
     phone: { type: String, default: '+91 93282 22520' },
+    /** Up to 3 public contact numbers (phone = primary / first) */
+    phones: {
+      type: [
+        {
+          label: { type: String, default: '' },
+          number: { type: String, default: '' },
+        },
+      ],
+      default: [
+        { label: 'Primary', number: '+91 93282 22520' },
+        { label: '', number: '' },
+        { label: '', number: '' },
+      ],
+    },
     email: { type: String, default: 'info@tharsolar.com' },
     gst: { type: String, default: '' },
 
